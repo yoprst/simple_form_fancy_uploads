@@ -7,7 +7,6 @@ module SimpleFormFancyUploads
 
       out = ''
       out << template.image_tag(url) if url
-      out << @builder.input("#{attribute_name}_cache", as: 'hidden')
       (out << super).html_safe
     end
 
@@ -15,12 +14,12 @@ module SimpleFormFancyUploads
 
     def preview_url(merged_input_options)
       use_default_url = options.delete(:use_default_url) || false
-      version = merged_input_options.delete(:preview_version)
+      version = merged_input_options.delete(:preview_version) || :original
 
       if merged_input_options[:preview_url]
         merged_input_options[:preview_url]
       elsif object && object.send("#{attribute_name}?") || use_default_url
-        object.send(attribute_name).tap {|o| break o.send(version) if version}.send('url')
+        object.send(attribute_name).url(version)
       end
     end
   end
